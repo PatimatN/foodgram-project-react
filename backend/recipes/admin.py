@@ -36,6 +36,7 @@ class RecipeAdmin(admin.ModelAdmin):
             if len(tags) > 2:
                 tags_list += f' и еще {len(tags) - 2}'
             return tags_list
+        return '-'
 
     tags_list.short_description = 'Теги'
 
@@ -50,7 +51,3 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
-
-
-
-

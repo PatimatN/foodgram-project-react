@@ -1,14 +1,16 @@
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from rest_framework import serializers
 
-from .models import User
 from recipes.models import Subscribe
+
+from .models import User
 
 
 class UserSerializer(BaseUserSerializer):
     class Meta:
         model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', 'password',)
+        fields = ('email', 'id', 'username', 'first_name',
+                  'last_name', 'password',)
 
 
 class UserShowSerializer(serializers.ModelSerializer):

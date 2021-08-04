@@ -1,10 +1,11 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import (Recipe, Tag, RecipeIngredient, Ingredient, Favorite,
-                     Subscribe, ShoppingList)
 from users.models import User
 from users.serializers import UserShowSerializer
+
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingList, Subscribe, Tag)
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -42,7 +43,8 @@ class AddIngredientRecipeSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
-    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(many=True,
+                                              queryset=Tag.objects.all())
     ingredients = AddIngredientRecipeSerializer(many=True)
 
     class Meta:
@@ -119,7 +121,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False
-        return ShoppingList.objects.filter(user=request.user, recipe=obj).exists()
+        return ShoppingList.objects.filter(user=request.user,
+                                           recipe=obj).exists()
 
 
 class RecipeShortSerializer(serializers.ModelSerializer):
