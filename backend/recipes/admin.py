@@ -1,10 +1,10 @@
 from django.contrib import admin
 
-from.models import Ingredient, IngredientRecipe, Recipe, Tag
+from.models import Ingredient, RecipeIngredient, Recipe, Tag
 
 
-class IngredientRecipeInline(admin.TabularInline):
-    model = IngredientRecipe
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
     autocomplete_fields = ('ingredient',)
     extra = 1
 
@@ -25,10 +25,10 @@ class RecipeAdmin(admin.ModelAdmin):
         'author__first_name',
         'author__last_name',
         'author__username',
-        'text'
     )
+    list_filter = ('tags',)
     autocomplete_fields = ('author', 'tags',)
-    inlines = [IngredientRecipeInline]
+    inlines = [RecipeIngredientInline]
 
     def tags_list(self, obj):
         if tags := obj.tags.all():
