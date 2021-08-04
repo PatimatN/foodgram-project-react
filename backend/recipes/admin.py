@@ -34,7 +34,7 @@ class RecipeAdmin(admin.ModelAdmin):
 
     def tags_list(self, obj):
         if tags := obj.tags.all():
-            tags_list = ', '.join([tag.name for tag in tags[:2]])
+            tags_list = ', '.join(tags.values_list('name', flat=True)[:2])
             if len(tags) > 2:
                 tags_list += f' и еще {len(tags) - 2}'
             return tags_list

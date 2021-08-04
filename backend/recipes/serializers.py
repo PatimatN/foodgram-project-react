@@ -1,5 +1,6 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
 from users.models import User
 from users.serializers import UserShowSerializer
@@ -33,9 +34,6 @@ class ShowRecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
-    amount = serializers.IntegerField()
-
     class Meta:
         model = Ingredient
         fields = ('id', 'amount')
@@ -61,7 +59,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             RecipeIngredient.objects.create(
                 recipe=recipe,
-                ingredient=Ingredient.objects.get(id=ingredient['id']),
+                ingredient=get_object_or_404(Ingredient, id=ingredient['id']),
                 amount=ingredient['amount'],
             )
         return recipe
@@ -72,7 +70,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             for ingredient in ingredients:
                 RecipeIngredient.objects.update_or_create(
                     recipe=instance,
-                    ingredient=Ingredient.objects.get(id=ingredient['id']),
+                    ingredient=get_object_or_404(Ingredient,
+                                                 id=ingredient['id']),
                     defaults={'amount': ingredient['amount']}
                 )
         if 'tags' in self.initial_data:
@@ -186,7 +185,7 @@ class SubscribersSerializer(serializers.ModelSerializer):
                   'is_subscribed', 'recipes', 'recipes_count')
 
     def get_recipes_count(self, obj):
-        return len(obj.recipes.all())
+        return obj.recipes.count()
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
