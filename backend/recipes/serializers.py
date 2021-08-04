@@ -32,7 +32,7 @@ class ShowRecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit', 'amount']
 
 
-class AddIngredientRecipeSerializer(serializers.ModelSerializer):
+class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
@@ -45,7 +45,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
     tags = serializers.PrimaryKeyRelatedField(many=True,
                                               queryset=Tag.objects.all())
-    ingredients = AddIngredientRecipeSerializer(many=True)
+    ingredients = AddIngredientToRecipeSerializer(many=True)
 
     class Meta:
         model = Recipe
@@ -153,6 +153,28 @@ class FavoriteSerializer(serializers.ModelSerializer):
         ).data
 
 
+class ShoppingListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ShoppingList
+        fields = '__all__'
+
+    def validate(self, attrs):
+        request = self.context['request']
+        if (request.method == 'GET'
+                and ShoppingList.objects.filter(user=request.user,
+                                                recipe=attrs['recipe'])):
+            raise serializers.ValidationError(
+                'Вы уже добавили рецепт в список покупок'
+            )
+        return attrs
+
+    def to_representation(self, instance):
+        return RecipeShortSerializer(
+            instance.recipe,
+            context={'request': self.context.get('request')}
+        ).data
+
+
 class SubscribersSerializer(serializers.ModelSerializer):
     recipes = RecipeShortSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
@@ -193,27 +215,5 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return SubscribersSerializer(
             instance.author,
-            context={'request': self.context.get('request')}
-        ).data
-
-
-class ShoppingListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ShoppingList
-        fields = '__all__'
-
-    def validate(self, attrs):
-        request = self.context['request']
-        if (request.method == 'GET'
-                and ShoppingList.objects.filter(user=request.user,
-                                                recipe=attrs['recipe'])):
-            raise serializers.ValidationError(
-                'Вы уже добавили рецепт в список покупок'
-            )
-        return attrs
-
-    def to_representation(self, instance):
-        return RecipeShortSerializer(
-            instance.recipe,
             context={'request': self.context.get('request')}
         ).data

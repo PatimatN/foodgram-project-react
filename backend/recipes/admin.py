@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from.models import Ingredient, RecipeIngredient, Recipe, Tag
+from .models import (Favorite, Ingredient, Recipe, RecipeIngredient,
+                     ShoppingList, Subscribe, Tag)
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -17,6 +18,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = (
         'name',
         'author',
+        'favorite_count',
         'tags_list',
         'cooking_time'
     )
@@ -40,6 +42,11 @@ class RecipeAdmin(admin.ModelAdmin):
 
     tags_list.short_description = 'Теги'
 
+    def favorite_count(self, obj):
+        return Favorite.objects.filter(recipe=obj).distinct().count()
+
+    favorite_count.short_description = 'Добавлений в избранное'
+
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -51,3 +58,30 @@ class TagAdmin(admin.ModelAdmin):
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit',)
     search_fields = ('name',)
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author',)
+    search_fields = ('user__first_name', 'user__last_name', 'user__username',
+                     'author__first_name', 'author__last_name',
+                     'author__username',)
+    autocomplete_fields = ('user', 'author',)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+    search_fields = ('user__first_name', 'user__last_name', 'user__username',
+                     'recipe__name',)
+    autocomplete_fields = ('user',)
+    raw_id_fields = ('recipe',)
+
+
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+    search_fields = ('user__first_name', 'user__last_name', 'user__username',
+                     'recipe__name',)
+    autocomplete_fields = ('user',)
+    raw_id_fields = ('recipe',)

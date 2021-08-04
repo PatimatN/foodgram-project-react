@@ -4,11 +4,9 @@ from .models import Recipe
 
 
 class RecipeFilter(filters.FilterSet):
-    tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug'
-    )
     is_favorited = filters.BooleanFilter(method='get_favorites')
     is_in_shopping_cart = filters.BooleanFilter(method='get_in_shopping_cart')
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
 
     class Meta:
         model = Recipe
@@ -16,14 +14,10 @@ class RecipeFilter(filters.FilterSet):
 
     def get_favorites(self, queryset, name, value):
         if value:
-            return Recipe.objects.filter(
-                favorited_by__user=self.request.user
-            )
+            return Recipe.objects.filter(favorited_by__user=self.request.user)
         return Recipe.objects.all()
 
     def get_in_shopping_cart(self, queryset, name, value):
         if value:
-            return Recipe.objects.filter(
-                customers__user=self.request.user
-            )
+            return Recipe.objects.filter(customers__user=self.request.user)
         return Recipe.objects.all()

@@ -14,14 +14,14 @@ class UserSerializer(BaseUserSerializer):
 
 
 class UserShowSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField('check_is_subscribed')
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name',
                   'last_name', 'is_subscribed',)
 
-    def check_is_subscribed(self, obj):
+    def get_is_subscribed(self, obj):
         request = self.context.get('request')
         if not request or request.user.is_anonymous:
             return False

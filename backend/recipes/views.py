@@ -4,7 +4,7 @@ from rest_framework import status, viewsets
 from rest_framework.filters import SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -73,8 +73,6 @@ class FavoriteViewSet(APIView):
 
 
 class SubscribeViewSet(APIView):
-    permission_classes = (IsAuthenticated,)
-
     def get(self, request, author_id=None):
         if author_id:
             data = {
@@ -101,7 +99,7 @@ class SubscribeViewSet(APIView):
                                           user=request.user,
                                           author__id=author_id)
             subscribe.delete()
-            return Response(f'Подписка успешно удалена',
+            return Response('Подписка успешно удалена',
                             status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
