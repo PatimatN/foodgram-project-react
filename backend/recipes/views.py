@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
-from rest_framework.filters import SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
@@ -10,7 +9,7 @@ from rest_framework.views import APIView
 
 from users.models import User
 
-from .filters import RecipeFilter
+from .filters import RecipeFilter, SearchFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingList, Subscribe, Tag
 from .permissions import AuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,

@@ -33,10 +33,9 @@ class ShowRecipeIngredientSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'measurement_unit', 'amount']
 
 
-class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ingredient
-        fields = ('id', 'amount')
+class AddIngredientToRecipeSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    amount = serializers.IntegerField()
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
@@ -67,12 +66,13 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if 'ingredients' in self.initial_data:
             ingredients = validated_data.pop('ingredients')
+            instance.ingredients.clear()
             for ingredient in ingredients:
-                RecipeIngredient.objects.update_or_create(
+                RecipeIngredient.objects.create(
                     recipe=instance,
                     ingredient=get_object_or_404(Ingredient,
                                                  id=ingredient['id']),
-                    defaults={'amount': ingredient['amount']}
+                    amount=ingredient['amount']
                 )
         if 'tags' in self.initial_data:
             tags = validated_data.pop('tags')
