@@ -5,7 +5,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ../backend/.env
+      - ./.env
 
   frontend:
     build:
@@ -28,7 +28,7 @@ services:
       - static_value:/code/backend_static/
       - media_value:/code/backend_media/
     env_file:
-      - ../backend/.env
+      - ./.env
 
   nginx:
     image: nginx:1.19.3
