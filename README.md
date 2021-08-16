@@ -12,7 +12,7 @@
 * frontend - образ фронтенда
 * postgres - образ базы данных PostgreSQL v 12.04
 * nginx
-* 
+
 ### Команда клонирования репозитория:
 ```
 git clone https://github.com/PatimatN/foodgram-project-react.git
@@ -32,7 +32,7 @@ DB_PORT=db_port
 
 ### Запуск проекта:
 * Установите Докер
-* Перейдите в папку проекте *infra/*
+* Перейдите в папку в проекте *infra/*
 * Выполните команду:
 ```
 docker-compose up -d --build
@@ -51,9 +51,9 @@ docker-compose up -d --build
 
 ## Данные для входа
 ### Суперпользователь
-**email**: admin@admin.ru
-**password**: admin
+**email**: admin@admin.ru  
+**password**: admin  
 
 ### Тестовый пользователь
-**email**: umar@yandex.ru
-**password**: MyPass111
+**email**: umar@yandex.ru  
+**password**: MyPass111  
