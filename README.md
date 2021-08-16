@@ -1,4 +1,5 @@
 ![example workflow](https://github.com/PatimatN/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+Проект развернут по адресу http://84.252.139.205/
 # Продуктовый помощник. Foodgram
 
 ## Описание
@@ -13,15 +14,46 @@
 * nginx
 * 
 ### Команда клонирования репозитория:
-> git clone https://github.com/PatimatN/foodgram-project-react.git
+```
+git clone https://github.com/PatimatN/foodgram-project-react.git
+```
+
+### Заполнение .env:
+Чтобы добавить переменную в .env необходимо открыть файл .env в корневой директории проекта и поместить туда переменную в формате имя_переменной=значение. Пример .env файла:
+
+```
+DB_ENGINE=my_db 
+DB_NAME=db_name 
+POSTGRES_USER=my_user 
+POSTGRES_PASSWORD=my_pass 
+DB_HOST=db_host 
+DB_PORT=db_port
+```
 
 ### Запуск проекта:
 * Установите Докер
+* Перейдите в папку проекте *infra/*
 * Выполните команду:
-> docker pull pavelkhan/foodgram-project-react :latest
-Первоначальная настройка Django:
-- docker-compose exec web python manage.py migrate --noinput
-- docker-compose exec web python manage.py collectstatic --no-input
-Создание суперпользователя:
-- docker-compose exec web python manage.py createsuperuser
+```
+docker-compose up -d --build
+```
 
+### Первоначальная настройка Django:
+```
+- docker-compose exec backend python manage.py migrate --noinput
+- docker-compose exec backend python manage.py collectstatic --no-input
+```
+### Создание суперпользователя:
+```
+- docker-compose exec backend python manage.py createsuperuser
+```
+
+
+## Данные для входа
+### Суперпользователь
+**email**: admin@admin.ru
+**password**: admin
+
+### Тестовый пользователь
+**email**: umar@yandex.ru
+**password**: MyPass111
