@@ -1,4 +1,4 @@
-![example workflow](https://github.com/PatimatN/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+![example workflow](https://github.com/PatimatN/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)  
 Проект развернут по адресу http://84.252.139.205/
 # Продуктовый помощник. Foodgram
 
