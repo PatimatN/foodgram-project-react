@@ -142,6 +142,7 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    'HIDE_USERS': False,
     'SERIALIZERS': {
         'user': 'users.serializers.UserShowSerializer',
         'current_user': 'users.serializers.UserShowSerializer'
