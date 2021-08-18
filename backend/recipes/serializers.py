@@ -64,8 +64,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             obj = get_object_or_404(Ingredient, id=ingredient['id'])
             amount = ingredient['amount']
-            if RecipeIngredient(recipe=recipe,
-                                ingredient=obj).objects.exists():
+            if RecipeIngredient.objects.filter(recipe=recipe,
+                                               ingredient=obj).exists():
                 amount += F('amount')
             RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
@@ -88,8 +88,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 obj = get_object_or_404(Ingredient,
                                         id=ingredient['id'])
                 amount = ingredient['amount']
-                if RecipeIngredient(recipe=instance,
-                                    ingredient=obj).objects.exists():
+                if RecipeIngredient.objects.filter(recipe=instance,
+                                                   ingredient=obj).exists():
                     amount += F('amount')
                 RecipeIngredient.objects.update_or_create(
                     recipe=instance,
