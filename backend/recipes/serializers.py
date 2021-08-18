@@ -81,17 +81,28 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                                                       'не может быть '
                                                       'отрицательным числом.')
             instance.ingredients.clear()
+            print()
+            print('--------')
+            print(ingredients)
             for ingredient in ingredients:
-                obj, created = RecipeIngredient.objects.update_or_create(
+                print(get_object_or_404(Ingredient,
+                                                 id=ingredient['id']))
+                RecipeIngredient.objects.create(
                     recipe=instance,
                     ingredient=get_object_or_404(Ingredient,
                                                  id=ingredient['id']),
+                    amount=ingredient['amount']
                 )
-                amount = (ingredient['amount'] if created
-                          else ingredient['amount'] + F('amount'))
-                RecipeIngredient.objects.filter(pk=obj.pk).update(
-                    amount=amount
-                )
+                # obj, created = RecipeIngredient.objects.update_or_create(
+                #     recipe=instance,
+                #     ingredient=get_object_or_404(Ingredient,
+                #                                  id=ingredient['id']),
+                # )
+                # amount = (ingredient['amount'] if created
+                #           else ingredient['amount'] + F('amount'))
+                # RecipeIngredient.objects.filter(pk=obj.pk).update(
+                #     amount=amount
+                # )
         if 'tags' in self.initial_data:
             tags = validated_data.pop('tags')
             instance.tags.set(tags)
