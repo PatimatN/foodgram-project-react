@@ -62,14 +62,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
-            ingredient_obj = get_object_or_404(Ingredient, id=ingredient['id'])
+            obj = get_object_or_404(Ingredient, id=ingredient['id'])
             amount = ingredient['amount']
             if RecipeIngredient(recipe=recipe,
-                                ingredient=ingredient_obj).objects.exists():
+                                ingredient=obj).objects.exists():
                 amount += F('amount')
             RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
-                ingredient=ingredient_obj,
+                ingredient=obj,
                 defaults={'amount': amount}
             )
         return recipe
@@ -85,16 +85,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                                                       'отрицательным числом.')
             instance.ingredients.clear()
             for ingredient in ingredients:
-                ingredient_obj = get_object_or_404(Ingredient,
-                                                   id=ingredient['id'])
+                obj = get_object_or_404(Ingredient,
+                                        id=ingredient['id'])
                 amount = ingredient['amount']
                 if RecipeIngredient(recipe=instance,
-                                    ingredient=ingredient_obj).objects\
-                        .exists():
+                                    ingredient=obj).objects.exists():
                     amount += F('amount')
                 RecipeIngredient.objects.update_or_create(
                     recipe=instance,
-                    ingredient=ingredient_obj,
+                    ingredient=obj,
                     defaults={'amount': amount}
                 )
         if 'tags' in self.initial_data:
