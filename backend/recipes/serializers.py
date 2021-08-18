@@ -85,24 +85,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             print('--------')
             print(ingredients)
             for ingredient in ingredients:
-                print(get_object_or_404(Ingredient,
-                                        id=ingredient['id']))
-                RecipeIngredient.objects.create(
+                obj, created = RecipeIngredient.objects.update_or_create(
                     recipe=instance,
                     ingredient=get_object_or_404(Ingredient,
                                                  id=ingredient['id']),
-                    amount=ingredient['amount']
                 )
-                # obj, created = RecipeIngredient.objects.update_or_create(
-                #     recipe=instance,
-                #     ingredient=get_object_or_404(Ingredient,
-                #                                  id=ingredient['id']),
-                # )
-                # amount = (ingredient['amount'] if created
-                #           else ingredient['amount'] + F('amount'))
-                # RecipeIngredient.objects.filter(pk=obj.pk).update(
-                #     amount=amount
-                # )
+                amount = (ingredient['amount'] if created
+                          else ingredient['amount'] + F('amount'))
+                RecipeIngredient.objects.filter(pk=obj.pk).update(
+                    amount=amount
+                )
         if 'tags' in self.initial_data:
             tags = validated_data.pop('tags')
             instance.tags.set(tags)
