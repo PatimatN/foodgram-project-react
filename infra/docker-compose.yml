@@ -16,9 +16,7 @@ services:
 
   backend:
     container_name: backend
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: dockerpatimat/foodgram:latest
     restart: always
     depends_on:
       - db
