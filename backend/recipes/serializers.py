@@ -57,8 +57,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             if ingredient['amount'] < 0:
                 raise serializers.ValidationError('Количество ингредиента '
-                                                  'должно быть положительным '
-                                                  'числом.')
+                                                  'не может быть '
+                                                  'отрицательным числом.')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
@@ -78,8 +78,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             for ingredient in ingredients:
                 if ingredient['amount'] < 0:
                     raise serializers.ValidationError('Количество ингредиента '
-                                                      'должно быть положительным '
-                                                      'числом.')
+                                                      'не может быть '
+                                                      'отрицательным числом.')
             instance.ingredients.clear()
             for ingredient in ingredients:
                 obj, created = RecipeIngredient.objects.update_or_create(
