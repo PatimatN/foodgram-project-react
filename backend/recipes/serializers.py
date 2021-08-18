@@ -62,13 +62,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
         for ingredient in ingredients:
-            obj, created = RecipeIngredient.objects.update_or_create(
+            ingredient = get_object_or_404(Ingredient, id=ingredient['id'])
+            amount = ingredient['amount']
+            if RecipeIngredient(recipe=recipe,
+                                ingredient=ingredient).objects.exists():
+                amount += F('amount')
+            RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
-                ingredient=get_object_or_404(Ingredient, id=ingredient['id']),
+                ingredient=ingredient,
+                defaults={'amount': amount}
             )
-            amount = (ingredient['amount'] if created
-                      else ingredient['amount'] + F('amount'))
-            RecipeIngredient.objects.filter(pk=obj.pk).update(amount=amount)
         return recipe
 
     def update(self, instance, validated_data):
@@ -81,19 +84,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                                                       'не может быть '
                                                       'отрицательным числом.')
             instance.ingredients.clear()
-            print()
-            print('--------')
-            print(ingredients)
             for ingredient in ingredients:
-                obj, created = RecipeIngredient.objects.update_or_create(
+                ingredient = get_object_or_404(Ingredient, id=ingredient['id'])
+                amount = ingredient['amount']
+                if RecipeIngredient(recipe=instance,
+                                    ingredient=ingredient).objects.exists():
+                    amount += F('amount')
+                RecipeIngredient.objects.update_or_create(
                     recipe=instance,
-                    ingredient=get_object_or_404(Ingredient,
-                                                 id=ingredient['id']),
-                )
-                amount = (ingredient['amount'] if created
-                          else ingredient['amount'] + F('amount'))
-                RecipeIngredient.objects.filter(pk=obj.pk).update(
-                    amount=amount
+                    ingredient=ingredient,
+                    defaults={'amount': amount}
                 )
         if 'tags' in self.initial_data:
             tags = validated_data.pop('tags')
