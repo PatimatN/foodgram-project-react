@@ -86,7 +86,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             print(ingredients)
             for ingredient in ingredients:
                 print(get_object_or_404(Ingredient,
-                                                 id=ingredient['id']))
+                                        id=ingredient['id']))
                 RecipeIngredient.objects.create(
                     recipe=instance,
                     ingredient=get_object_or_404(Ingredient,
