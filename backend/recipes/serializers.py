@@ -38,13 +38,6 @@ class AddIngredientToRecipeSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
-    def validate(self, attrs):
-        if attrs['amount'] < 0:
-            raise serializers.ValidationError(
-                {'amount': 'Введите положительное число'}
-            )
-        return attrs
-
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
@@ -60,9 +53,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
+
+        for ingredient in ingredients:
+            if ingredient['amount'] < 0:
+                raise serializers.ValidationError('Количество ингредиента '
+                                                  'должно быть положительным '
+                                                  'числом.')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-
         for ingredient in ingredients:
             obj, created = RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
@@ -76,6 +74,12 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if 'ingredients' in self.initial_data:
             ingredients = validated_data.pop('ingredients')
+
+            for ingredient in ingredients:
+                if ingredient['amount'] < 0:
+                    raise serializers.ValidationError('Количество ингредиента '
+                                                      'должно быть положительным '
+                                                      'числом.')
             instance.ingredients.clear()
             for ingredient in ingredients:
                 obj, created = RecipeIngredient.objects.update_or_create(
