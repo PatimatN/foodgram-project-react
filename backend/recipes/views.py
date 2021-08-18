@@ -11,6 +11,7 @@ from users.models import User
 
 from .filters import RecipeFilter, SearchFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingList, Subscribe, Tag
+from .paginators import PageNumberPaginatorModified
 from .permissions import AuthorOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeListSerializer,
@@ -24,7 +25,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     permission_classes = (AuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    pagination_class = PageNumberPagination
+    pagination_class = PageNumberPaginatorModified
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

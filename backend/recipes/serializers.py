@@ -1,3 +1,4 @@
+from django.db.models import F
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.generics import get_object_or_404
@@ -37,6 +38,13 @@ class AddIngredientToRecipeSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
 
+    def validate(self, attrs):
+        if attrs['amount'] < 0:
+            raise serializers.ValidationError(
+                {'amount': 'Введите положительное число'}
+            )
+        return attrs
+
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
@@ -56,11 +64,13 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
 
         for ingredient in ingredients:
-            RecipeIngredient.objects.create(
+            obj, created = RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
                 ingredient=get_object_or_404(Ingredient, id=ingredient['id']),
-                amount=ingredient['amount'],
             )
+            amount = (ingredient['amount'] if created
+                      else ingredient['amount'] + F('amount'))
+            RecipeIngredient.objects.filter(pk=obj.pk).update(amount=amount)
         return recipe
 
     def update(self, instance, validated_data):
@@ -68,11 +78,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             ingredients = validated_data.pop('ingredients')
             instance.ingredients.clear()
             for ingredient in ingredients:
-                RecipeIngredient.objects.create(
+                obj, created = RecipeIngredient.objects.update_or_create(
                     recipe=instance,
                     ingredient=get_object_or_404(Ingredient,
                                                  id=ingredient['id']),
-                    amount=ingredient['amount']
+                )
+                amount = (ingredient['amount'] if created
+                          else ingredient['amount'] + F('amount'))
+                RecipeIngredient.objects.filter(pk=obj.pk).update(
+                    amount=amount
                 )
         if 'tags' in self.initial_data:
             tags = validated_data.pop('tags')
